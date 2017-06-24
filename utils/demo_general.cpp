@@ -5,6 +5,9 @@
  * License: see the LICENSE.txt file
  */
 
+#define USE_CONTRIB
+#define OPENCV_VERSION_3
+
 #include <iostream>
 #include <vector>
 
@@ -53,12 +56,8 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
     cv::Ptr<cv::Feature2D> fdetector;
     if (descriptor=="orb")        fdetector=cv::ORB::create();
     else if (descriptor=="brisk") fdetector=cv::BRISK::create();
-#ifdef OPENCV_VERSION_3
     else if (descriptor=="akaze") fdetector=cv::AKAZE::create();
-#endif
-#ifdef USE_CONTRIB
     else if(descriptor=="surf" )  fdetector=cv::xfeatures2d::SURF::create(400, 4, 2, EXTENDED_SURF);
-#endif
 
     else throw std::runtime_error("Invalid descriptor");
     assert(!descriptor.empty());
@@ -186,13 +185,13 @@ int main(int argc,char **argv)
         }
 
         string descriptor=argv[1];
-
+        cout << descriptor << endl;
         auto images=readImagePaths(argc,argv,2);
         vector< cv::Mat   >   features= loadFeatures(images,descriptor);
         testVocCreation(features);
 
 
-        testDatabase(features);
+//        testDatabase(features);
 
     }catch(std::exception &ex){
         cerr<<ex.what()<<endl;
