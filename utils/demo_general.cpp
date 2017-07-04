@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <vector>
+#include <string.h>
+#include <dirent.h>
 
 // DBoW3
 #include "DBoW3.h"
@@ -26,6 +28,11 @@
 
 using namespace DBoW3;
 using namespace std;
+
+const int NUM_KLUSTER = 10;
+const int NUM_LAYER = 5;
+const int num_training = 99;
+const int num_test = 91;
 
 
 //command line parser
@@ -44,11 +51,68 @@ void wait()
     getchar();
 }
 
+// functions
+vector<string> getFileNames (string dir)
+{
+	vector<string> file_lists;
+
+	DIR *dp;
+	struct dirent *ep;
+	dp = opendir (dir.c_str());
+
+	if (dp != NULL)
+	{
+		while (ep = readdir (dp)){
+			if (strcmp(ep->d_name, ".") && strcmp(ep->d_name, ".."))
+				file_lists.push_back(dir + "/"+ ep->d_name);
+		}
+
+		(void) closedir (dp);
+	}
+	else
+		perror ("Couldn't open the directory");
+
+	sort(file_lists.begin(),file_lists.end());
+
+	return file_lists;
+}
 
 vector<string> readImagePaths(int argc,char **argv,int start){
     vector<string> paths;
-    for(int i=start;i<argc;i++)    paths.push_back(argv[i]);
-        return paths;
+    for(int i=start;i<argc;i++)
+    	paths.push_back(argv[i]);
+
+    return paths;
+}
+vector<string> readImagePaths(int from, int to, bool isTraining){
+
+	// configurable parameters
+	const string train_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/Places365/Large_images/val_large/images";
+	const string test_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/FAB-MAP/Image Data/City Centre ManualLC/images";
+
+	vector<string> paths;
+	if (isTraining)
+	{
+		paths = getFileNames(train_img_dir_path.c_str());
+		paths.erase(paths.begin()+100, paths.end());
+	}
+	else
+		paths = getFileNames(test_img_dir_path.c_str());
+
+	return paths;
+//
+//	for(int i = from; i <= to; ++i)
+//	{
+//		char filename[1024];
+//		if (isTraining)
+//			sprintf(filename, "/media/dongwonshin/Ubuntu Data/Datasets/Places365/Large_images/val_large/images/Places365_val_%08d.jpg", i);
+//		else
+//			sprintf(filename, "/media/dongwonshin/Ubuntu Data/Datasets/FAB-MAP/Image Data/City Centre/images/%04d.jpg", i);
+//
+////		printf("%s\n", filename);
+//		paths.push_back(filename);
+//	}
+//	return paths;
 }
 
 vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string descriptor="") throw (std::exception){
@@ -63,8 +127,8 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
     assert(!descriptor.empty());
     vector<cv::Mat>    features;
 
+//    cout << "Extracting   features..." << endl;
 
-    cout << "Extracting   features..." << endl;
     for(size_t i = 0; i < path_to_images.size(); ++i)
     {
         vector<cv::KeyPoint> keypoints;
@@ -72,52 +136,84 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
         cout<<"reading image: "<<path_to_images[i]<<endl;
         cv::Mat image = cv::imread(path_to_images[i], 0);
         if(image.empty())throw std::runtime_error("Could not open image"+path_to_images[i]);
-        cout<<"extracting features"<<endl;
+//        cout<<"extracting features"<<endl;
         fdetector->detectAndCompute(image, cv::Mat(), keypoints, descriptors);
         features.push_back(descriptors);
-        cout<<"done detecting features"<<endl;
+//        cout<<"done detecting features"<<endl;
     }
+
     return features;
 }
 
 // ----------------------------------------------------------------------------
 
-void testVocCreation(const vector<cv::Mat> &features)
+void testVocCreation(string descriptor, const vector<cv::Mat> &training_features, const vector<cv::Mat> &test_features)
 {
     // branching factor and depth levels
-    const int k = 9;
-    const int L = 3;
+    const int k = NUM_KLUSTER;
+    const int L = NUM_LAYER;
     const WeightingType weight = TF_IDF;
-    const ScoringType score = L1_NORM;
+    const ScoringType score = L2_NORM;
 
     DBoW3::Vocabulary voc(k, L, weight, score);
 
     cout << "Creating a small " << k << "^" << L << " vocabulary..." << endl;
-    voc.create(features);
+    voc.create(training_features);
     cout << "... done!" << endl;
 
-    cout << "Vocabulary information: " << endl
-         << voc << endl << endl;
+    cout << "Vocabulary information: " << endl << voc << endl << endl;
 
+    string file_name = descriptor+"_corr_matrix.txt";
+    FILE *fp = fopen(file_name.c_str(),"wt");
     // lets do something with this vocabulary
     cout << "Matching images against themselves (0 low, 1 high): " << endl;
     BowVector v1, v2;
-    for(size_t i = 0; i < features.size(); i++)
-    {
-        voc.transform(features[i], v1);
-        for(size_t j = 0; j < features.size(); j++)
-        {
-            voc.transform(features[j], v2);
+    for(int i = 0; i < test_features.size(); i++)
+	{
+		double max_score = 0.0;
+		int most_related_idx = 0;
 
-            double score = voc.score(v1, v2);
-            cout << "Image " << i << " vs Image " << j << ": " << score << endl;
-        }
-    }
+		voc.transform(test_features[i], v1);
+		for(int j = 0; j < test_features.size(); j++)
+		{
+			if (i <= j) {
+				voc.transform(test_features[j], v2);
 
-    // save the vocabulary to disk
-    cout << endl << "Saving vocabulary..." << endl;
-    voc.save("small_voc.yml.gz");
-    cout << "Done" << endl;
+				double score = voc.score(v1, v2);
+				fprintf(fp, "%lf ", score);
+
+				if (max_score < score && score < 0.99)
+				{
+					max_score = score;
+					most_related_idx = j+1;
+				}
+			}
+			else
+			{
+				fprintf(fp, "%lf ", 0);
+			}
+		}
+		fprintf(fp, "\n");
+		printf("current_idx=%d, max_score=%lf, most_related_idx=%d\n", i+1, max_score, most_related_idx);
+	}
+    fclose(fp);
+
+//    for(size_t i = 0; i < features.size(); i++)
+//    {
+//        voc.transform(features[i], v1);
+//        for(size_t j = 0; j < features.size(); j++)
+//        {
+//            voc.transform(features[j], v2);
+//
+//            double score = voc.score(v1, v2);
+//            cout << "Image " << i << " vs Image " << j << ": " << score << endl;
+//        }
+//    }
+
+//    // save the vocabulary to disk
+//    cout << endl << "Saving vocabulary..." << endl;
+//    voc.save("small_voc.yml.gz");
+//    cout << "Done" << endl;
 }
 
 ////// ----------------------------------------------------------------------------
@@ -176,7 +272,6 @@ void testDatabase(const  vector<cv::Mat > &features)
 
 int main(int argc,char **argv)
 {
-
     try{
         CmdLineParser cml(argc,argv);
         if (cml["-h"] || argc<=2){
@@ -186,12 +281,14 @@ int main(int argc,char **argv)
 
         string descriptor=argv[1];
         cout << descriptor << endl;
-        auto images=readImagePaths(argc,argv,2);
-        vector< cv::Mat   >   features= loadFeatures(images,descriptor);
-        testVocCreation(features);
 
+        auto training_images=readImagePaths(1,num_training,true);
+        vector< cv::Mat> training_features = loadFeatures(training_images,descriptor);
 
-//        testDatabase(features);
+        auto test_images=readImagePaths(1,num_test,false);
+        vector< cv::Mat> test_features = loadFeatures(test_images,descriptor);
+
+        testVocCreation(descriptor, training_features, test_features);
 
     }catch(std::exception &ex){
         cerr<<ex.what()<<endl;

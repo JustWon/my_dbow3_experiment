@@ -121,6 +121,10 @@ iostream
 -
 vector
 -
+string.h
+-
+dirent.h
+-
 DBoW3.h
 /home/dongwonshin/Desktop/DBow3/utils/DBoW3.h
 opencv2/core/core.hpp

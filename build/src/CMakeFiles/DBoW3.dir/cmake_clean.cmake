@@ -1,4 +1,4 @@
-FILE(REMOVE_RECURSE
+file(REMOVE_RECURSE
   "CMakeFiles/DBoW3.dir/DescManip.cpp.o"
   "CMakeFiles/DBoW3.dir/QueryResults.cpp.o"
   "CMakeFiles/DBoW3.dir/quicklz.c.o"
@@ -14,6 +14,6 @@ FILE(REMOVE_RECURSE
 )
 
 # Per-language clean rules from dependency scanning.
-FOREACH(lang C CXX)
-  INCLUDE(CMakeFiles/DBoW3.dir/cmake_clean_${lang}.cmake OPTIONAL)
-ENDFOREACH(lang)
+foreach(lang C CXX)
+  include(CMakeFiles/DBoW3.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
