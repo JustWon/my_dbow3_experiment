@@ -13,6 +13,11 @@
 #include <string.h>
 #include <dirent.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <iomanip>
+
 // DBoW3
 #include "DBoW3.h"
 
@@ -34,10 +39,15 @@ const int NUM_LAYER = 5;
 const int num_training = 99;
 const int num_test = 91;
 
+string g_descriptor = "brisk";
+string corr_matrix_output = "";
+ScoringType g_score;
 
-//command line parser
-class CmdLineParser{int argc; char **argv; public: CmdLineParser(int _argc,char **_argv):argc(_argc),argv(_argv){}  bool operator[] ( string param ) {int idx=-1;  for ( int i=0; i<argc && idx==-1; i++ ) if ( string ( argv[i] ) ==param ) idx=i;    return ( idx!=-1 ) ;    } string operator()(string param,string defvalue="-1"){int idx=-1;    for ( int i=0; i<argc && idx==-1; i++ ) if ( string ( argv[i] ) ==param ) idx=i; if ( idx==-1 ) return defvalue;   else  return ( argv[  idx+1] ); }};
+const string dataset_name = "New College";
 
+// configurable parameters
+const string train_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/Places365/Large_images/val_large/images";
+const string test_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/FAB-MAP/Image Data/"+ dataset_name +" ManualLC/images";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -63,7 +73,7 @@ vector<string> getFileNames (string dir)
 	if (dp != NULL)
 	{
 		while (ep = readdir (dp)){
-			if (strcmp(ep->d_name, ".") && strcmp(ep->d_name, ".."))
+			if (strcmp(ep->d_name, ".") && strcmp(ep->d_name, "..") && strcmp(ep->d_name, "temp"))
 				file_lists.push_back(dir + "/"+ ep->d_name);
 		}
 
@@ -77,6 +87,61 @@ vector<string> getFileNames (string dir)
 	return file_lists;
 }
 
+void strCurrentTime(ostringstream& ss)
+{
+	time_t t = time(0);   // get time now
+	struct tm * now = localtime( & t );
+	ss << (now->tm_year + 1900) << '-'
+		 << setfill('0') << setw(2) << (now->tm_mon + 1) << '-'
+		 << setfill('0') << setw(2) << now->tm_mday << '-'
+		 << setfill('0') << setw(2) << now->tm_hour << '-'
+		 << setfill('0') << setw(2) << now->tm_min << '-'
+		 << setfill('0') << setw(2) << now->tm_sec;
+}
+
+struct stat st = {0};
+void makeLogDir(ostringstream& ss)
+{
+	string log_dir = "result/" + ss.str();
+
+	if (stat(log_dir.c_str(), &st) == -1) {
+ 	   mkdir(log_dir.c_str(), 0700);
+	}
+}
+
+string scoringTypeToString(ScoringType score)
+{
+	if (score == L1_NORM)
+		return string("L1_NORM");
+	else if (score == L2_NORM)
+		return string("L2_NORM");
+	else if (score == CHI_SQUARE)
+		return string("CHI_SQUARE");
+	else if (score == KL)
+		return string("KL");
+	else if (score == BHATTACHARYYA)
+		return string("BHATTACHARYYA");
+	else if (score == DOT_PRODUCT)
+		return string("DOT_PRODUCT");
+}
+
+void resultLogOrganization()
+{
+	ostringstream cur_time_str;
+	strCurrentTime(cur_time_str);
+	makeLogDir(cur_time_str);
+
+	corr_matrix_output = "result/" + cur_time_str.str() + "/corr_matrix.txt";
+	cout << corr_matrix_output.c_str() << endl;
+
+	ofstream ofs(("result/"+cur_time_str.str()+"/parameters.cfg").c_str());
+
+	ofs << "[General]" << endl;
+	ofs << "Method = "  << g_descriptor << endl;
+	ofs << "Dataset = " << dataset_name << endl;
+	ofs << "Scoring type = " << scoringTypeToString(g_score) << endl;
+}
+
 vector<string> readImagePaths(int argc,char **argv,int start){
     vector<string> paths;
     for(int i=start;i<argc;i++)
@@ -85,10 +150,6 @@ vector<string> readImagePaths(int argc,char **argv,int start){
     return paths;
 }
 vector<string> readImagePaths(int from, int to, bool isTraining){
-
-	// configurable parameters
-	const string train_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/Places365/Large_images/val_large/images";
-	const string test_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/FAB-MAP/Image Data/City Centre ManualLC/images";
 
 	vector<string> paths;
 	if (isTraining)
@@ -121,7 +182,7 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
     if (descriptor=="orb")        fdetector=cv::ORB::create();
     else if (descriptor=="brisk") fdetector=cv::BRISK::create();
     else if (descriptor=="akaze") fdetector=cv::AKAZE::create();
-    else if(descriptor=="surf" )  fdetector=cv::xfeatures2d::SURF::create(400, 4, 2, EXTENDED_SURF);
+    else if(descriptor=="surf" )  fdetector=cv::xfeatures2d::SURF::create(300, 4, 2, EXTENDED_SURF);
 
     else throw std::runtime_error("Invalid descriptor");
     assert(!descriptor.empty());
@@ -138,7 +199,20 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
         if(image.empty())throw std::runtime_error("Could not open image"+path_to_images[i]);
 //        cout<<"extracting features"<<endl;
         fdetector->detectAndCompute(image, cv::Mat(), keypoints, descriptors);
-        features.push_back(descriptors);
+
+        int limited_num = 30000;
+        if (descriptors.size().height < limited_num)
+        {
+        	features.push_back(descriptors);
+        	cout << descriptors.size() << endl;
+        }
+        else
+        {
+			cv::Rect r(0,0,fdetector->descriptorSize(),limited_num);
+			cv::Mat limited_desc = descriptors(r).clone();
+			cout << limited_desc.size() << endl;
+			features.push_back(limited_desc);
+        }
 //        cout<<"done detecting features"<<endl;
     }
 
@@ -153,7 +227,7 @@ void testVocCreation(string descriptor, const vector<cv::Mat> &training_features
     const int k = NUM_KLUSTER;
     const int L = NUM_LAYER;
     const WeightingType weight = TF_IDF;
-    const ScoringType score = L2_NORM;
+    const ScoringType score = g_score;
 
     DBoW3::Vocabulary voc(k, L, weight, score);
 
@@ -163,7 +237,7 @@ void testVocCreation(string descriptor, const vector<cv::Mat> &training_features
 
     cout << "Vocabulary information: " << endl << voc << endl << endl;
 
-    string file_name = descriptor+"_corr_matrix.txt";
+    string file_name = corr_matrix_output;
     FILE *fp = fopen(file_name.c_str(),"wt");
     // lets do something with this vocabulary
     cout << "Matching images against themselves (0 low, 1 high): " << endl;
@@ -273,14 +347,10 @@ void testDatabase(const  vector<cv::Mat > &features)
 int main(int argc,char **argv)
 {
     try{
-        CmdLineParser cml(argc,argv);
-        if (cml["-h"] || argc<=2){
-            cerr<<"Usage:  descriptor_name     image0 image1 ... \n\t descriptors:brisk,surf,orb ,akaze(only if using opencv 3)"<<endl;
-             return -1;
-        }
-
-        string descriptor=argv[1];
+        string descriptor= g_descriptor;
         cout << descriptor << endl;
+
+        resultLogOrganization();
 
         auto training_images=readImagePaths(1,num_training,true);
         vector< cv::Mat> training_features = loadFeatures(training_images,descriptor);

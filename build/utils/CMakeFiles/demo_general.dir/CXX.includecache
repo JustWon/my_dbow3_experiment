@@ -125,6 +125,14 @@ string.h
 -
 dirent.h
 -
+sys/types.h
+-
+sys/stat.h
+-
+unistd.h
+-
+iomanip
+-
 DBoW3.h
 /home/dongwonshin/Desktop/DBow3/utils/DBoW3.h
 opencv2/core/core.hpp
