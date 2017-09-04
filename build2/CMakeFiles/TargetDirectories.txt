@@ -1,0 +1,5 @@
+/home/dongwonshin/Desktop/DBow3/build2/utils/CMakeFiles/demo_general.dir
+/home/dongwonshin/Desktop/DBow3/build2/CMakeFiles/uninstall.dir
+/home/dongwonshin/Desktop/DBow3/build2/utils/CMakeFiles/create_voc_step0.dir
+/home/dongwonshin/Desktop/DBow3/build2/utils/CMakeFiles/create_voc_step1.dir
+/home/dongwonshin/Desktop/DBow3/build2/src/CMakeFiles/DBoW3.dir

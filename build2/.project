@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>DBoW3-Release@build2</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.make.core.makeBuilder</name>
+			<triggers>clean,full,incremental,</triggers>
+			<arguments>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
+					<value>clean</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.enableCleanBuild</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.append_environment</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.stopOnError</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.enabledIncrementalBuild</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.command</key>
+					<value>/usr/bin/make</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.contents</key>
+					<value>org.eclipse.cdt.make.core.activeConfigSettings</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.target.inc</key>
+					<value>all</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.arguments</key>
+					<value>-j16</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.buildLocation</key>
+					<value>/home/dongwonshin/Desktop/DBow3/build2</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
+					<value>false</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.environment</key>
+					<value>VERBOSE=1|CMAKE_NO_VERBOSE=1|</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.enableFullBuild</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.target.auto</key>
+					<value>all</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>
+					<value>false</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.target.clean</key>
+					<value>clean</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
+					<value>all</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.buildArguments</key>
+					<value></value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.build.location</key>
+					<value>/home/dongwonshin/Desktop/DBow3/build2</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>
+					<value>all</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.core.errorOutputParser</key>
+					<value>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.cdt.make.core.ScannerConfigBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.cdt.make.core.makeNature</nature>
+		<nature>org.eclipse.cdt.make.core.ScannerConfigNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[Subprojects]</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/QueryResults.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/QueryResults.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/ScoringObject.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/ScoringObject.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/quicklz.c</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/quicklz.c</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/Database.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/Database.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/BowVector.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/BowVector.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/FeatureVector.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/FeatureVector.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/DescManip.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/DescManip.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Source Files/Vocabulary.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/Vocabulary.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/FeatureVector.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/FeatureVector.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/ScoringObject.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/ScoringObject.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/Vocabulary.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/Vocabulary.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/QueryResults.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/QueryResults.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/DescManip.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/DescManip.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/DBoW3.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/DBoW3.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/quicklz.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/quicklz.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/Database.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/Database.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/BowVector.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/BowVector.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/timers.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/timers.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Header Files/exports.h</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/src/exports.h</location>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[lib] DBoW3/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/Source Files/demo_general.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/utils/demo_general.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] demo_general/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/Source Files/create_voc_step0.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/utils/create_voc_step0.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step0/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/Source Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/Source Files/create_voc_step1.cpp</name>
+			<type>1</type>
+			<location>/home/dongwonshin/Desktop/DBow3/utils/create_voc_step1.cpp</location>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/Header Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/CMake Rules</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/Resources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>[Targets]/[exe] create_voc_step1/Object Files</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

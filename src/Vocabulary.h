@@ -423,7 +423,7 @@ protected:
 
    /**Loads from ORBSLAM txt files
     */
-   void load_fromtxt(const std::string &filename)throw(std::runtime_error);
+   void load_fromtxt(const std::string &filename) throw(std::runtime_error);
 
 protected:
 

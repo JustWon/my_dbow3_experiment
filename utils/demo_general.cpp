@@ -20,6 +20,7 @@
 
 // DBoW3
 #include "DBoW3.h"
+#include "DWConfig.h"
 
 // OpenCV
 #include <opencv2/core/core.hpp>
@@ -34,22 +35,8 @@
 using namespace DBoW3;
 using namespace std;
 
-const int NUM_KLUSTER = 10;
-const int NUM_LAYER = 5;
-const int num_training = 99;
-const int num_test = 91;
-
-string g_descriptor = "brisk";
-string corr_matrix_output = "";
-ScoringType g_score;
-
-const string dataset_name = "New College";
-
-// configurable parameters
-const string train_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/Places365/Large_images/val_large/images";
-const string test_img_dir_path = "/media/dongwonshin/Ubuntu Data/Datasets/FAB-MAP/Image Data/"+ dataset_name +" ManualLC/images";
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+DW_Config dw_config;
 
 // extended surf gives 128-dimensional vectors
 const bool EXTENDED_SURF = false;
@@ -61,104 +48,16 @@ void wait()
     getchar();
 }
 
-// functions
-vector<string> getFileNames (string dir)
-{
-	vector<string> file_lists;
-
-	DIR *dp;
-	struct dirent *ep;
-	dp = opendir (dir.c_str());
-
-	if (dp != NULL)
-	{
-		while (ep = readdir (dp)){
-			if (strcmp(ep->d_name, ".") && strcmp(ep->d_name, "..") && strcmp(ep->d_name, "temp"))
-				file_lists.push_back(dir + "/"+ ep->d_name);
-		}
-
-		(void) closedir (dp);
-	}
-	else
-		perror ("Couldn't open the directory");
-
-	sort(file_lists.begin(),file_lists.end());
-
-	return file_lists;
-}
-
-void strCurrentTime(ostringstream& ss)
-{
-	time_t t = time(0);   // get time now
-	struct tm * now = localtime( & t );
-	ss << (now->tm_year + 1900) << '-'
-		 << setfill('0') << setw(2) << (now->tm_mon + 1) << '-'
-		 << setfill('0') << setw(2) << now->tm_mday << '-'
-		 << setfill('0') << setw(2) << now->tm_hour << '-'
-		 << setfill('0') << setw(2) << now->tm_min << '-'
-		 << setfill('0') << setw(2) << now->tm_sec;
-}
-
-struct stat st = {0};
-void makeLogDir(ostringstream& ss)
-{
-	string log_dir = "result/" + ss.str();
-
-	if (stat(log_dir.c_str(), &st) == -1) {
- 	   mkdir(log_dir.c_str(), 0700);
-	}
-}
-
-string scoringTypeToString(ScoringType score)
-{
-	if (score == L1_NORM)
-		return string("L1_NORM");
-	else if (score == L2_NORM)
-		return string("L2_NORM");
-	else if (score == CHI_SQUARE)
-		return string("CHI_SQUARE");
-	else if (score == KL)
-		return string("KL");
-	else if (score == BHATTACHARYYA)
-		return string("BHATTACHARYYA");
-	else if (score == DOT_PRODUCT)
-		return string("DOT_PRODUCT");
-}
-
-void resultLogOrganization()
-{
-	ostringstream cur_time_str;
-	strCurrentTime(cur_time_str);
-	makeLogDir(cur_time_str);
-
-	corr_matrix_output = "result/" + cur_time_str.str() + "/corr_matrix.txt";
-	cout << corr_matrix_output.c_str() << endl;
-
-	ofstream ofs(("result/"+cur_time_str.str()+"/parameters.cfg").c_str());
-
-	ofs << "[General]" << endl;
-	ofs << "Method = "  << g_descriptor << endl;
-	ofs << "Dataset = " << dataset_name << endl;
-	ofs << "Scoring type = " << scoringTypeToString(g_score) << endl;
-}
-
-vector<string> readImagePaths(int argc,char **argv,int start){
-    vector<string> paths;
-    for(int i=start;i<argc;i++)
-    	paths.push_back(argv[i]);
-
-    return paths;
-}
 vector<string> readImagePaths(int from, int to, bool isTraining){
 
 	vector<string> paths;
 	if (isTraining)
 	{
-		paths = getFileNames(train_img_dir_path.c_str());
+		paths = dw_config.getFileNames(dw_config.getTrainImgDirPath().c_str());
 		paths.erase(paths.begin()+100, paths.end());
 	}
 	else
-		paths = getFileNames(test_img_dir_path.c_str());
+		paths = dw_config.getFileNames(dw_config.getTestImgDirPath().c_str());
 
 	return paths;
 //
@@ -190,7 +89,7 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
 
 //    cout << "Extracting   features..." << endl;
 
-    for(size_t i = 0; i < path_to_images.size(); ++i)
+    for(size_t i = 0; i < path_to_images.size() ; ++i)
     {
         vector<cv::KeyPoint> keypoints;
         cv::Mat descriptors;
@@ -204,7 +103,7 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
         if (descriptors.size().height < limited_num)
         {
         	features.push_back(descriptors);
-        	cout << descriptors.size() << endl;
+//        	cout << descriptors.size() << endl;
         }
         else
         {
@@ -224,10 +123,10 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
 void testVocCreation(string descriptor, const vector<cv::Mat> &training_features, const vector<cv::Mat> &test_features)
 {
     // branching factor and depth levels
-    const int k = NUM_KLUSTER;
-    const int L = NUM_LAYER;
-    const WeightingType weight = TF_IDF;
-    const ScoringType score = g_score;
+    const int k = dw_config.getClusterCenterNum();
+    const int L = dw_config.getDepthLevelNum();
+    const WeightingType weight = dw_config.getWeightingType();
+    const ScoringType score = dw_config.getScoringType();
 
     DBoW3::Vocabulary voc(k, L, weight, score);
 
@@ -237,7 +136,7 @@ void testVocCreation(string descriptor, const vector<cv::Mat> &training_features
 
     cout << "Vocabulary information: " << endl << voc << endl << endl;
 
-    string file_name = corr_matrix_output;
+    string file_name = dw_config.getCorrMatrixOutput();
     FILE *fp = fopen(file_name.c_str(),"wt");
     // lets do something with this vocabulary
     cout << "Matching images against themselves (0 low, 1 high): " << endl;
@@ -343,19 +242,18 @@ void testDatabase(const  vector<cv::Mat > &features)
 
 
 // ----------------------------------------------------------------------------
-
 int main(int argc,char **argv)
 {
     try{
-        string descriptor= g_descriptor;
+        string descriptor= dw_config.getEvalMethod();
         cout << descriptor << endl;
 
-        resultLogOrganization();
+        dw_config.resultLogOrganization();
 
-        auto training_images=readImagePaths(1,num_training,true);
+        auto training_images=readImagePaths(1,dw_config.getTrainSetNum(),true);
         vector< cv::Mat> training_features = loadFeatures(training_images,descriptor);
 
-        auto test_images=readImagePaths(1,num_test,false);
+        auto test_images=readImagePaths(1,dw_config.getTestSetNum(),false);
         vector< cv::Mat> test_features = loadFeatures(test_images,descriptor);
 
         testVocCreation(descriptor, training_features, test_features);
